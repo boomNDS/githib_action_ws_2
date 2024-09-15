@@ -1,0 +1,39 @@
+name: Build Android
+
+on: push
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+      - name: Setup Android
+        uses: amyu/setup-android@v4
+        with:
+          sdk-version: 34
+          build-tools-version: 35.0.0
+      - name: Setup Flutter Version
+        uses: kuhnroyal/flutter-fvm-config-action@v2
+        id: fvm-config-action
+        with:
+          path: ".fvmrc"
+      - name: Setup Flutter Version
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm-config-action.outputs.FLUTTER_VERSION }}
+      - name: Build APK
+        run: fvm flutter build apk --no-tree-shake-icons --flavor prod --release
+      - name: Check output file
+        run: |
+          cd build/app/outputs/flutter-apk
+          ls -la
+      - name: Echo if Success
+        if: ${{ success() }}
+        run: echo "Build successful"
+      - name: Echo if Failure
+        if: ${{ failure() }}
+        run: echo "Build failed"

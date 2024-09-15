@@ -26,7 +26,7 @@ jobs:
         with:
           flutter-version: ${{ steps.fvm-config-action.outputs.FLUTTER_VERSION }}
       - name: Build APK
-        run: fvm flutter build apk --no-tree-shake-icons --flavor prod --release
+        run: fvm flutter build apk --no-tree-shake-icons
       - name: Check output file
         run: |
           cd build/app/outputs/flutter-apk
